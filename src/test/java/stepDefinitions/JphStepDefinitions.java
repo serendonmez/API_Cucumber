@@ -1,6 +1,11 @@
 package stepDefinitions;
 
 
+
+
+
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.When;
 import io.restassured.http.ContentType;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
@@ -9,6 +14,7 @@ import io.cucumber.java.en.Then;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 
+import org.json.JSONObject;
 import org.junit.Assert;
 import utilities.ConfigReader;
 
@@ -23,16 +29,17 @@ public class JphStepDefinitions {
     Response response;
 
     JsonPath responseJP;
-    JSONObject requestBody;
+    JSONObject requestBody=new JSONObject();
+    JSONObject expectedDataResponseBody= new JSONObject();
 
 
 
     @Given("Kullanici {string} base URL'ini kullanir")
-    public void kullanici_base_url_ini_kullanir(String string) {
+    public void kullanici_base_url_ini_kullanir(String jPHBaseUrl) {
         //      Kullanici "jPHBaseUrl" base URL'ini kullanir
 
 
-        endPoint= ConfigReader.getProperty("jPHBaseUrl");
+        endPoint= ConfigReader.getProperty(jPHBaseUrl);
 
 
     }
@@ -104,7 +111,7 @@ public class JphStepDefinitions {
     public void post_request_icin_bilgileri_ile_request_body_olusturur(String title, String body, Integer userId, Integer id) {
         //POST request icin "Ahmet","Merhaba",10 bilgileri ile request body olusturur
 
-        requestBody=new JSONObject();
+
         requestBody.put("title",title);
         requestBody.put("body",body);
         requestBody.put("userId",userId);
@@ -144,4 +151,55 @@ public class JphStepDefinitions {
 
     }
 
+
+
+    @Then("jPH server'a PUT request gonderir ve response'i kaydeder")
+    public void j_ph_server_a_put_request_gonderir_ve_response_i_kaydeder() {
+        //jPH server'a PUT request gonderir ve response'i kaydeder
+        response=given().contentType(ContentType.JSON)
+                            .body(requestBody.toString())
+                            .when()
+                            .put(endPoint);
+
+    }
+    @Then("expected response body ile actual response'daki attribute degerlerinin ayni oldugunu test eder")
+    public void expected_response_body_ile_actual_response_daki_attribute_degerlerinin_ayni_oldugunu_test_eder() {
+       // expected response body ile actual response'daki attribute degerlerinin ayni oldugunu test eder
+
+
+        Assert.assertEquals(expectedDataResponseBody.getString("title"),responseJP.getString("title"));
+        Assert.assertEquals(expectedDataResponseBody.getString("body"),responseJP.getString("body"));
+        Assert.assertEquals(expectedDataResponseBody.getInt("userId"),
+                responseJP.getInt("userId"));
+
+
+    }
+
+
+
+    @And("Test icin  {string}, {string} {int} ve {int} degerleri ile expected response body olusturur")
+    public void testIcinVeDegerleriIleExpectedResponseBodyOlusturur(String title, String body, Integer userId, Integer id) {
+
+
+
+        expectedDataResponseBody.put("title",title );
+        expectedDataResponseBody.put("body",body );
+        expectedDataResponseBody.put("userId",userId );
+        expectedDataResponseBody.put("id",id );
+
+        System.out.println(expectedDataResponseBody);
+
+    }
+
+
+
+    @When("PUT request icin {string} {string} ve {int} degerleri ile request body olusturur")
+    public void put_request_icin_ve_degerleri_ile_request_body_olusturur(String title, String body, Integer userId) {
+
+
+        requestBody.put("title",title);
+        requestBody.put("body",body);
+        requestBody.put("userId",userId);
+        System.out.println(requestBody);
+    }
 }
