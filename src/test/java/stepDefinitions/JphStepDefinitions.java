@@ -1,14 +1,19 @@
 package stepDefinitions;
 
+
+import io.restassured.http.ContentType;
+import org.hamcrest.Matchers;
+import org.json.JSONObject;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
-import org.hamcrest.Matchers;
+
 import org.junit.Assert;
 import utilities.ConfigReader;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.*;
 
 
 public class JphStepDefinitions {
@@ -18,6 +23,9 @@ public class JphStepDefinitions {
     Response response;
 
     JsonPath responseJP;
+    JSONObject requestBody;
+
+
 
     @Given("Kullanici {string} base URL'ini kullanir")
     public void kullanici_base_url_ini_kullanir(String string) {
@@ -88,4 +96,52 @@ public class JphStepDefinitions {
 
 
     }
+
+
+
+
+    @Then("POST request icin {string},{string},{int},{int} bilgileri ile request body olusturur")
+    public void post_request_icin_bilgileri_ile_request_body_olusturur(String title, String body, Integer userId, Integer id) {
+        //POST request icin "Ahmet","Merhaba",10 bilgileri ile request body olusturur
+
+        requestBody=new JSONObject();
+        requestBody.put("title",title);
+        requestBody.put("body",body);
+        requestBody.put("userId",userId);
+        requestBody.put("id",id);
+
+
+    }
+    @Then("jPH server a POST request gonderir ve testleri yapmak icin response degerini kaydeder")
+    public void j_ph_server_a_post_request_gonderir_ve_testleri_yapmak_icin_response_degerini_kaydeder() {
+
+        //jPH server a POST request gonderir ve testleri yapmak icin response degerini kaydeder
+
+        response=given().contentType(ContentType.JSON)
+                .when().body(requestBody.toString())
+                .post(endPoint);
+
+
+
+    }
+    @Then("jPH respons daki {string} header degerinin {string}")
+    public void j_ph_respons_daki_header_degerinin(String headerKey, String headerValue) {
+
+
+        //jPH respons daki "Connection" header degerinin "keep-alive"
+
+        response.then().assertThat().header(headerKey, response.header(headerKey));
+    }
+    @Then("response attribute degerlerinin {string},{string},{int} ve {int} oldugunu test eder")
+    public void response_attribute_degerlerinin_ve_oldugunu_test_eder(String title, String body, Integer userId, Integer id) {
+
+        // response attribute degerlerinin "Ahmet","Merhaba",10 ve 101 oldugunu test eder
+
+        Assert.assertEquals(title,responseJP.getString("title"));
+        Assert.assertEquals(body,responseJP.getString("body"));
+        Assert.assertEquals(userId,(Integer)responseJP.getInt("userId"));
+        Assert.assertEquals(id,(Integer)responseJP.getInt("id"));
+
+    }
+
 }
