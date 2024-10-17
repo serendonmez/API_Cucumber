@@ -1,6 +1,6 @@
 Feature: JsonPlaceHolder Endpointinde GEt Request ile test yapar
 
-@Api1
+@api1
   Scenario: TC01 yapilan GET request sonucunda response degerleri beklenen degerlere esit olmali
 
     Given Kullanici "jPHBaseUrl" base URL'ini kullanir

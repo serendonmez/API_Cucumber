@@ -1,6 +1,8 @@
-Feature:
+Feature: US1004 kullanici JPH endpoitine Post Request gönderir
 
-  Scenario:
+@api4
+  Scenario: TC04 Kullanici Post request sonucu dönen response i test eder
+
 
     Given Kullanici "jPHBaseUrl" base URL'ini kullanir
     And Path parametreleri icin "posts" kullanir

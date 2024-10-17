@@ -1,6 +1,6 @@
 Feature: US1002 kullanici JPH endpoitine Post Request gönderir
 
-  @Api2
+  @api2
   Scenario: TC01 Kullanici Post request sonucu dönen response i test eder
 
 

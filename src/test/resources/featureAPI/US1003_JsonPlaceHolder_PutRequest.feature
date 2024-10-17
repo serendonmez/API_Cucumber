@@ -1,6 +1,6 @@
 Feature: US1003 Kullanici JPH da PUT request yapar
 
-  @wip
+  @api3
   Scenario: TC03 donen actual response expected response ile ayni olmali
 
     Given Kullanici "jPHBaseUrl" base URL'ini kullanir
